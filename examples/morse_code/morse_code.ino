@@ -6,7 +6,7 @@ void setup() {
 
 void loop() {
   // Funzione per scrivere la stringa in codice Morse
-  morseCode("OASI DI PACE");
+  morseCode("CHIARA");
   // Attendi un po' prima di ripetere
   delay(10000);
 }
@@ -36,6 +36,8 @@ void sendMorse(char c) {
     case 'P': dot(); dash(); dash(); dot(); break;
     case 'C': dash(); dot(); dash(); dot(); break;
     case 'E': dot(); break;
+    case 'H': dot(); dot(); dot(); dot(); break;
+    case 'R': dot(); dash(); dot(); break;
   }
 }
 
