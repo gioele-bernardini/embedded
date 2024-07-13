@@ -2,4 +2,15 @@
 
 #include <stdio.h>
 
-int main
+#define N_COLUMNS 130
+
+void initialize(int* array) {
+  for (int i = 0; i < N_COLUMNS; i++)
+
+}
+
+int main() {
+  while(1) {
+
+  }
+}
