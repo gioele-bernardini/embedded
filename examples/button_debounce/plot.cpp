@@ -7,6 +7,11 @@
 #define N_COLUMNS 130
 #define N_TRANSITIONS_LINES 10
 
+// The following functions might have been implemented
+// without the length of the array as a parameter,
+// as that is a global variabile and could be easily accessed.
+// I am nevertheless implementing them this way just for good practice
+
 // Function to initialize all the array elements to 0
 void set_default(int* plot_array, int length) {
   for (int i = 0; i < length; i++)

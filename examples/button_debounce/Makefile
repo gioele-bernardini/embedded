@@ -1,4 +1,5 @@
-# I studied Makefiles during the OS course
+# I studied Makefiles during the OS course..
+# But that's boilerplate code.
 # I just need to refresh the concepts and review the syntax,
 # as it is not known for being particularly intuitive.
 # I will keep the comments for completeness.
