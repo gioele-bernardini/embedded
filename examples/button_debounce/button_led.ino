@@ -34,6 +34,8 @@ void setup() {
   pinMode(ledPin, OUTPUT);
   // initialize the pushbutton pin as an input:
   pinMode(buttonPin, INPUT);
+  // initialize serial communication:
+  Serial.begin(9600);
 }
 
 void loop() {
@@ -44,6 +46,8 @@ void loop() {
   if (buttonState == HIGH) {
     // turn LED on:
     digitalWrite(ledPin, HIGH);
+    // print "Hello, World!" to the serial monitor:
+    Serial.println("Button Pressed");
   } else {
     // turn LED off:
     digitalWrite(ledPin, LOW);
