@@ -3,29 +3,28 @@
 # as it is not known for being particularly intuitive.
 # I will keep the comments for completeness.
 
-
 # Compiler name
-CC = gcc
+CXX = g++
 
 # Compiler options
-CFLAGS = -Wall -Wextra -pedantic -std=c99
+CXXFLAGS = -Wall -Wextra -pedantic -std=c++11
 
 # Name of the executable file
 TARGET = keyboard_event
 
 # Source files
-SRCS = keyboard_event.c
+SRCS = main.cpp TerminalConfig.cpp
 
 # Generated object files
-OBJS = $(SRCS:.c=.o)
+OBJS = $(SRCS:.cpp=.o)
 
 # Rule to compile the project
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
 
-# Rule to compile .c files into object files
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+# Rule to compile .cpp files into object files
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Rule to clean the project
 clean:
