@@ -10,10 +10,10 @@ CXX = g++
 CXXFLAGS = -Wall -Wextra -pedantic -std=c++11
 
 # Name of the executable file
-TARGET = keyboard_event
+TARGET = plot
 
 # Source files
-SRCS = main.cpp TerminalConfig.cpp
+SRCS = plot.cpp TerminalConfig.cpp
 
 # Generated object files
 OBJS = $(SRCS:.cpp=.o)
