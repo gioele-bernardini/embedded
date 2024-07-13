@@ -46,7 +46,7 @@ void loop() {
   if (buttonState == HIGH) {
     // turn LED on:
     digitalWrite(ledPin, HIGH);
-    Serial.println('1');
+    Serial.println("1");
   } else {
     // turn LED off:
     digitalWrite(ledPin, LOW);

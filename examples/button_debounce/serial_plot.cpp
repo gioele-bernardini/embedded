@@ -4,8 +4,8 @@
 #include <sys/time.h>
 #include <cstring>
 
-#define N_COLUMNS 130
-#define N_TRANSITIONS_LINES 10
+const int N_COLUMNS = 130;
+const int N_TRANSITIONS_LINES = 10;
 
 // Function to initialize all array elements to 0
 void set_default(int* plot_array, int length) {
