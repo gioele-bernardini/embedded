@@ -46,8 +46,7 @@ void loop() {
   if (buttonState == HIGH) {
     // turn LED on:
     digitalWrite(ledPin, HIGH);
-    // print "Hello, World!" to the serial monitor:
-    Serial.println("Button Pressed");
+    Serial.println('1');
   } else {
     // turn LED off:
     digitalWrite(ledPin, LOW);

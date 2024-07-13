@@ -11,10 +11,10 @@ CXX = g++
 CXXFLAGS = -Wall -Wextra -pedantic -std=c++11
 
 # Name of the executable file
-TARGET = plot
+TARGET = serial_plot
 
 # Source files
-SRCS = plot.cpp TerminalConfig.cpp
+SRCS = serial_plot.cpp TerminalConfig.cpp
 
 # Generated object files
 OBJS = $(SRCS:.cpp=.o)

@@ -1,65 +1,54 @@
+// g++ serial_read.cpp -o serial_read -lserialport
+
 #include <iostream>
-#include <fcntl.h>
 #include <unistd.h>
-#include <termios.h>
-#include <string.h>
+#include <libserialport.h>
+#include <cstring>
+
+void configure_port(sp_port* port) {
+  sp_set_baudrate(port, 9600);
+  sp_set_bits(port, 8);
+  sp_set_parity(port, SP_PARITY_NONE);
+  sp_set_stopbits(port, 1);
+  sp_set_flowcontrol(port, SP_FLOWCONTROL_NONE);
+}
 
 int main() {
-  int serialPort = open("/dev/ttyACM0", O_RDWR);
-
-  if (serialPort < 0) {
-    std::cerr << "Error " << errno << " opening /dev/ttyACM0: " << strerror(errno) << std::endl;
+  sp_port* port;
+  sp_return result = sp_get_port_by_name("/dev/ttyACM0", &port); // Cambia con la tua porta seriale
+  if (result != SP_OK) {
+    std::cerr << "Error finding serial port\n";
     return 1;
   }
 
-  termios tty;
-  memset(&tty, 0, sizeof tty);
-
-  if (tcgetattr(serialPort, &tty) != 0) {
-    std::cerr << "Error " << errno << " from tcgetattr: " << strerror(errno) << std::endl;
+  result = sp_open(port, SP_MODE_READ);
+  if (result != SP_OK) {
+    std::cerr << "Error opening serial port\n";
     return 1;
   }
 
-  cfsetispeed(&tty, B9600);
-  cfsetospeed(&tty, B9600);
-
-  tty.c_cflag |= (CLOCAL | CREAD);    // Ignore modem controls, enable reading
-  tty.c_cflag &= ~CSIZE;
-  tty.c_cflag |= CS8;         // 8-bit characters
-  tty.c_cflag &= ~PARENB;     // No parity bit
-  tty.c_cflag &= ~CSTOPB;     // Only need 1 stop bit
-  tty.c_cflag &= ~CRTSCTS;    // No hardware flow control
-
-  tty.c_lflag &= ~ICANON;
-  tty.c_lflag &= ~(ECHO | ECHOE | ECHONL | ISIG);    // Disable echo
-  tty.c_iflag &= ~(IXON | IXOFF | IXANY);             // No software flow control
-
-  tty.c_oflag &= ~OPOST;      // No special output processing
-
-  if (tcsetattr(serialPort, TCSANOW, &tty) != 0) {
-    std::cerr << "Error " << errno << " from tcsetattr: " << strerror(errno) << std::endl;
-    return 1;
-  }
+  configure_port(port);
 
   char readBuf[256];
-  memset(&readBuf, '\0', sizeof(readBuf));
-
   while (true) {
-    int numBytes = read(serialPort, &readBuf, sizeof(readBuf));
+    memset(&readBuf, '\0', sizeof(readBuf));
+    int numBytes = sp_nonblocking_read(port, readBuf, sizeof(readBuf) - 1);
 
     if (numBytes < 0) {
-      std::cerr << "Error reading: " << strerror(errno) << std::endl;
+      std::cerr << "Error reading: " << sp_last_error_message() << std::endl;
+      sp_free_error_message(sp_last_error_message());
       break;
     }
 
-    if (strstr(readBuf, "Button Pressed") != nullptr) {
-      std::cout << "Hello, World!" << std::endl;
+    if (strstr(readBuf, "1") != nullptr) {
+      std::cout << "Button pressed" << std::endl;
     }
 
-    memset(&readBuf, '\0', sizeof(readBuf));
+    usleep(100000); // Sleep for 100 ms to avoid busy-waiting
   }
 
-  close(serialPort);
+  sp_close(port);
+  sp_free_port(port);
   return 0;
 }
 
