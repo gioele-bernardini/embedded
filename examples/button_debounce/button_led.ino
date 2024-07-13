@@ -37,16 +37,16 @@ void setup() {
 }
 
 void loop() {
-  // // read the state of the pushbutton value:
-  // buttonState = digitalRead(buttonPin);
+  // read the state of the pushbutton value:
+  buttonState = digitalRead(buttonPin);
 
-  // // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-  // if (buttonState == HIGH) {
-  //   // turn LED on:
-  //   digitalWrite(ledPin, HIGH);
-  // } else {
-  //   // turn LED off:
-  //   digitalWrite(ledPin, LOW);
-  // }
+  // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
+  if (buttonState == HIGH) {
+    // turn LED on:
+    digitalWrite(ledPin, HIGH);
+  } else {
+    // turn LED off:
+    digitalWrite(ledPin, LOW);
+  }
 }
 
