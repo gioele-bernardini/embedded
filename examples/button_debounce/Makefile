@@ -21,7 +21,7 @@ OBJS = $(SRCS:.cpp=.o)
 
 # Rule to compile the project
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) -lserialport
 
 # Rule to compile .cpp files into object files
 %.o: %.cpp

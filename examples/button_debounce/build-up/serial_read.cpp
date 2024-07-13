@@ -1,3 +1,4 @@
+// Do not forget to link the library while compiling
 // g++ serial_read.cpp -o serial_read -lserialport
 
 #include <iostream>
