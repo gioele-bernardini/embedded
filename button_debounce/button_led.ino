@@ -15,7 +15,7 @@
     - This example uses MODE_TOGGLE as the default configuration.
 
   Notes:
-    - This implementation does not include debounce handling, so rapid button presses may cause unexpected behavior.
+    - This implementation does not include debounce handling, which will be covered later.
     - Ensure proper hardware connections before running the code.
 
   Hardware:
@@ -63,6 +63,8 @@ void loop() {
   }
 }
 
+// Note: Both parameters are global variables and are directly accessible.
+// This approach is used to promote good coding practices and enhance adaptability.
 void handleLED(int mode, int buttonState) {
   switch (mode) {
     case MODE_TOOGLE:
