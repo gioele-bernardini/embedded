@@ -3,7 +3,6 @@ When a new button state is detected, a debounce timer is started.
 The new state must remain stable for the duration of the timer to be considered valid.
 If the state remains unchanged past the debounce period, buttonState is updated.
 If buttonState transitions from LOW to HIGH, it is considered a button press, and the press count is incremented.
-Although buttonState is not strictly necessary, it simplifies the program logic.
 */
 
 const int buttonPin = 2;
