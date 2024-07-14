@@ -1,9 +1,29 @@
 /*
-The default setup for the LED and the button to be working.
-Debounce is *not* managed at all.
-Many configurations for the LED and the button are available.
-I implemented 3 of them and then I used the more classical one:
-The LED turns ON *while* the button is pressed; OFF otherwise.
+  Project: LED Control with Button
+  Description: This project demonstrates various configurations for controlling an LED using a button. 
+               Note that debounce handling is not implemented in this example. 
+               Three different LED behaviors are implemented, with the default being a toggle mode 
+               to highlight potential bounce issues.
+
+  Configurations:
+    1. MODE_TOGGLE - The LED toggles its state with each button press.
+    2. MODE_HOLD - The LED remains on while the button is pressed and off when released.
+    3. MODE_BLINK - The LED blinks briefly with each button press.
+
+  Usage:
+    - Modify the CURRENT_MODE constant to switch between different LED behaviors.
+    - This example uses MODE_TOGGLE as the default configuration.
+
+  Notes:
+    - This implementation does not include debounce handling, so rapid button presses may cause unexpected behavior.
+    - Ensure proper hardware connections before running the code.
+
+  Hardware:
+    - Button connected to pin 2.
+    - LED connected to pin 13.
+
+  Author: [Gioele Bernardini]
+  Date: [14/07/2024]
 */
 
 #define MODE_TOOGLE 1
@@ -20,8 +40,8 @@ int buttonState = 0;
 int lastButtonState = 0;
 int buttonPressCount = 0;
 
-// Required for the Toogle mode
-int ledState = 0;
+// Required for the Toggle mode
+int ledState = LOW;
 
 void setup() {
   pinMode(ledPin, OUTPUT);
@@ -38,62 +58,50 @@ void loop() {
       buttonPressCount++;
       Serial.println(buttonPressCount);
     }
+    handleLED(CURRENT_MODE, buttonState);
     lastButtonState = buttonState;
   }
-
-  // Send button state to the serial monitor
-  handleLED(int mode);
-  if (buttonState == HIGH) {
-    digitalWrite(ledPin, HIGH);
-  } else {
-    digitalWrite(ledPin, LOW);
-  }
 }
 
-void handleLED(int mode) {
+void handleLED(int mode, int buttonState) {
   switch (mode) {
     case MODE_TOOGLE:
-      toogleLED();
+      toggleLED(buttonState);
       break;
     case MODE_HOLD:
-      holdLED();
+      holdLED(buttonState);
       break;
     case MODE_BLINK:
-      blinkLED();
+      blinkLED(buttonState);
+      break;
+    default:
       break;
   }
 }
 
-// Here below are the implementations for the LED
-void toogleLED(int buttonState) {
+// Toggles the LED state on button press
+void toggleLED(int buttonState) {
   if (buttonState == HIGH) {
-  ledState = !ledState;
-  digitalWrite(ledPin, ledState);
-  }  
-
-  buttonPressCount++; // Increment the press count
-  Serial.println(buttonPressCount);
+    ledState = !ledState;
+    digitalWrite(ledPin, ledState);
+  }
 }
 
+// Keeps the LED on while the button is pressed
 void holdLED(int buttonState) {
   if (buttonState == HIGH) {
     digitalWrite(ledPin, HIGH);
-
-    buttonPressCount++; // Increment the press count
-    Serial.println(buttonPressCount);
   } else {
     digitalWrite(ledPin, LOW);
   }
 }
 
+// Blinks the LED briefly when the button is pressed
 void blinkLED(int buttonState) {
   if (buttonState == HIGH) {
     digitalWrite(ledPin, HIGH);
     delay(200);
     digitalWrite(ledPin, LOW);
-
-    buttonPressCount++; // Increment the press count
-    Serial.println(buttonPressCount);
   }
 }
 
