@@ -1,10 +1,11 @@
 const int buttonPin = 2;
 const int ledPin = 13;
-// increase if output flickers
+// Increase if output flickers
 const unsigned long debounceDelay = 50;
 
-int buttonState = 0;
-// the last time the output pin was toggled
+int buttonState = LOW;
+int lastButtonState = LOW;
+// The last time the output pin was toggled
 unsigned long lastDebounceTime = 0;
 
 void setup() {
@@ -19,8 +20,10 @@ void setup() {
 void loop() {
   int reading = digitalRead(buttonPin);
 
-  // check if the button state has changed
-  if (reading != buttonState) {
+  //  Serial.print("Reading: ");
+  //  Serial.println(reading);
+
+  if (reading != lastButtonState) {
     lastDebounceTime = millis();
   }
 
@@ -37,5 +40,6 @@ void loop() {
     digitalWrite(ledPin, LOW);
     Serial.println("0");
   }
-}
 
+  lastButtonState = reading;
+}
