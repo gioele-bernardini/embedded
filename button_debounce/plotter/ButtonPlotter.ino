@@ -25,6 +25,8 @@ void setup() {
   pinMode(ledPin, OUTPUT);
   pinMode(buttonPin, INPUT);
   Serial.begin(9600); // Initialize serial communication at 9600 bps
+
+  Serial.println(buttonState);
 }
 
 void loop() {
@@ -39,13 +41,11 @@ void loop() {
     // Update the button state if the debounce period has passed
     if (reading != buttonState) {
       buttonState = reading;
+      // Necessary for the plotter
+      Serial.println(buttonState);
 
       // Handle button press
-      if (buttonState == HIGH) {
-        buttonPressCount++;
-        Serial.println(buttonPressCount);
-        handleLED(CURRENT_MODE, buttonState);
-      }
+      handleLED(CURRENT_MODE, buttonState);
     }
   }
 
@@ -64,6 +64,7 @@ void handleLED(int mode, int buttonState) {
     case MODE_BLINK:
       blinkLED(buttonState);
       break;
+
     default:
       break;
   }

@@ -74,6 +74,7 @@ void handleLED(int mode, int buttonState) {
     case MODE_BLINK:
       blinkLED(buttonState);
       break;
+
     default:
       break;
   }
