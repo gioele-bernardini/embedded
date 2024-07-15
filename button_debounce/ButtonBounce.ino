@@ -55,6 +55,7 @@ void loop() {
       buttonPressCount++;
       Serial.println(buttonPressCount);
     }
+
     handleLED(CURRENT_MODE, buttonState);
     lastButtonState = buttonState;
   }
