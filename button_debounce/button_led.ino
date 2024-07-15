@@ -2,8 +2,6 @@
   Project: LED Control with Button
   Description: This project demonstrates various configurations for controlling an LED using a button. 
                Note that debounce handling is not implemented in this example. 
-               Three different LED behaviors are implemented, with the default being a toggle mode 
-               to highlight potential bounce issues.
 
   Configurations:
     1. MODE_TOGGLE - The LED toggles its state with each button press.
@@ -14,9 +12,8 @@
     - Modify the CURRENT_MODE constant to switch between different LED behaviors.
     - This example uses MODE_TOGGLE as the default configuration.
 
-  Notes:
-    - This implementation does not include debounce handling, which will be covered later.
     - Ensure proper hardware connections before running the code.
+    - Be aware of the pulldown resistor for the button connection.
 
   Hardware:
     - Button connected to pin 2.
