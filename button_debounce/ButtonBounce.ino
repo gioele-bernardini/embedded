@@ -13,7 +13,7 @@
     - This example uses MODE_TOGGLE as the default configuration.
 
     - Ensure proper hardware connections before running the code.
-    - Be aware of the pulldown resistor for the button connection.
+    - Be aware of the *pulldown* resistor for the button connection.
 
   Hardware:
     - Button connected to pin 2.

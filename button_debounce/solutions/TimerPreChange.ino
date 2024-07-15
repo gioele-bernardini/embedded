@@ -15,6 +15,8 @@ int buttonState = 0;      // Current debounced button state
 int lastReading = 0;      // Previous button reading
 unsigned long lastDebounceTime = 0; // Last time the button state changed
 
+int ledState = 0;
+
 void setup() {
   pinMode(ledPin, OUTPUT);
   pinMode(buttonPin, INPUT);
@@ -35,11 +37,11 @@ void loop() {
 
       // Handle the button press
       if (buttonState == HIGH) {
-        digitalWrite(ledPin, HIGH);
+        ledState = !ledState;
+        digitalWrite(ledPin, ledState);
+
         buttonPressCount++; // Increment the press count
         Serial.println(buttonPressCount);
-      } else {
-        digitalWrite(ledPin, LOW);
       }
     }
   }
