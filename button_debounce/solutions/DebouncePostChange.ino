@@ -14,7 +14,7 @@
   
   Pros:
   - Immediate feedback on the LED state change upon button press or release.
-  - Requires one less variable compared to the pre-stable change approach.
+  - Requires one less variable and a simpler logic compared to the pre-stable change approach.
 
   Cons:
   - May still register brief bounces as state changes if the debounce period is too short.
