@@ -3,14 +3,19 @@
 #include <iostream>
 #include <termios.h>
 #include <unistd.h>
+#include <ctime> // Include la libreria ctime per il calcolo del tempo
 
 using namespace std;
 
 #define N_COLUMNS 130
 #define N_ROWS_TRANSITIONS 10
+// Adjust this with your serial port
+#define SERIAL_PORT "/dev/ttyACM0"
 
 int plot[N_COLUMNS];
 int current_state = 0; // Variable to store the current state of the button
+int press_count = 0; // Variable to count button presses
+int previous_state = 0; // Variable to store the previous state of the button
 
 // Function to process the character read from the serial port
 void process_serial_char(char value) {
@@ -25,47 +30,17 @@ void process_serial_char(char value) {
     break;
   }
 
+  if (current_state == 1 && previous_state == 0) {
+    press_count++; // Increment the press count on a rising edge
+  }
+  previous_state = current_state; // Update the previous state
+
   plot[N_COLUMNS - 1] = current_state;
 }
 
 void initialize_plot() {
   for (int i = 0; i < N_COLUMNS; i++)
     plot[i] = 0;
-}
-
-void print_plot() {
-  // Use ANSI escape codes to clear the screen and move the cursor to the top-left
-  cout << "\033[2J\033[H";
-  cout << "\n";
-
-  // Print states '1'
-  for (int i = 0; i < N_COLUMNS; i++) {
-    if (plot[i] == 1)
-      cout << '_';
-    else
-      cout << ' ';
-  }
-  cout << endl;
-
-  // Print transitions
-  for (int j = 0; j < N_ROWS_TRANSITIONS; j++) {
-    for (int i = 0; i < N_COLUMNS - 1; i++) {
-      if (plot[i] != plot[i + 1])
-        cout << '|';
-      else
-        cout << ' ';
-    }
-    cout << endl;
-  }
-
-  // Print states '0'
-  for (int i = 0; i < N_COLUMNS; i++) {
-    if (plot[i] == 0)
-      cout << '_';
-    else
-      cout << ' ';
-  }
-  cout << endl;
 }
 
 void update_plot() {
@@ -75,7 +50,8 @@ void update_plot() {
 }
 
 int main() {
-  const char *device = "/dev/ttyACM0"; // Change this to your serial port
+  const char *device = SERIAL_PORT;
+
   struct termios tio;
   memset(&tio, 0, sizeof(tio)); // Initialize the `tio` structure to zero
 
@@ -98,9 +74,14 @@ int main() {
 
   initialize_plot();
 
+  // Get the start time
+  time_t start_time = time(nullptr);
+
   // Read data from the serial port
   while (1) {
     char value;
+
+    // read must be non-blocking, otherwise the loop will freeze
     int n = read(fd, &value, sizeof(char)); // Read a character from the serial port
 
     if (n > 0) {
@@ -108,7 +89,47 @@ int main() {
     }
 
     update_plot();
-    print_plot(); // Print the plot after updating
+
+    // Use ANSI escape codes to clear the screen and move the cursor to the top-left
+    cout << "\033[2J\033[H";
+    cout << "\n";
+
+    // Print states '1' - upper line
+    for (int i = 0; i < N_COLUMNS; i++) {
+      if (plot[i] == 1)
+        cout << '_';
+      else
+        cout << ' ';
+    }
+    cout << endl;
+
+    // Print transitions
+    for (int j = 0; j < N_ROWS_TRANSITIONS; j++) {
+      for (int i = 0; i < N_COLUMNS - 1; i++) {
+        if (plot[i] != plot[i + 1])
+          cout << '|';
+        else
+          cout << ' ';
+      }
+      cout << endl;
+    }
+
+    // Print states '0' - lower line
+    for (int i = 0; i < N_COLUMNS; i++) {
+      if (plot[i] == 0)
+        cout << '_';
+      else
+        cout << ' ';
+    }
+    cout << endl;
+
+    // Calculate and print the elapsed time in seconds
+    time_t current_time = time(nullptr);
+    int elapsed_time = static_cast<int>(difftime(current_time, start_time));
+    cout << "Time elapsed: " << elapsed_time << " seconds" << endl;
+
+    // Print the button press count
+    cout << "Button pressed: " << press_count << " times" << endl;
 
     // Add a small delay to avoid overwhelming the CPU
     usleep(100000); // 100 ms delay
@@ -117,3 +138,4 @@ int main() {
   close(fd); // Close the serial port
   return 0;
 }
+

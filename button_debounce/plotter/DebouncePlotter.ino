@@ -1,5 +1,5 @@
 /*
-  File: ButtonPlotter.ino
+  File: DebouncePlotter.ino
 */
 
 #define MODE_TOOGLE 1
@@ -97,6 +97,3 @@ void blinkLED(int buttonState) {
   }
 }
 
-void printPlot(int buttonState) {
-  Serial.println(buttonState); // Print the button state for plotting
-}
