@@ -26,7 +26,7 @@ void setup() {
   pinMode(buttonPin, INPUT);
   Serial.begin(9600); // Initialize serial communication at 9600 bps
 
-  Serial.println(buttonState);
+  Serial.print(buttonState); // Print initial state
 }
 
 void loop() {
@@ -41,8 +41,9 @@ void loop() {
     // Update the button state if the debounce period has passed
     if (reading != buttonState) {
       buttonState = reading;
-      // Necessary for the plotter
-      Serial.println(buttonState);
+
+      // Send the button state to the Serial Monitor for the plotter
+      Serial.print(buttonState);
 
       // Handle button press
       handleLED(CURRENT_MODE, buttonState);
@@ -96,3 +97,6 @@ void blinkLED(int buttonState) {
   }
 }
 
+void printPlot(int buttonState) {
+  Serial.println(buttonState); // Print the button state for plotting
+}
