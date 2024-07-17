@@ -1,9 +1,38 @@
+/*
+  Project: Button Press Visualizer
+  Description: This program interfaces with an Arduino to read button press states via a serial port,
+               and visualizes these states in a terminal window. It helps to check if the debounce
+               functionality is working correctly.
+
+  Motivation: This visualizer was created because the plotter in the Arduino IDE was not functioning
+              properly, so a basic and analogous solution was developed.
+
+  Visualizations:
+    - Upper line indicating the '1' states
+    - Transition lines indicating changes between '0' and '1' states
+    - Lower line indicating the '0' states
+
+  Usage:
+    - Adjust the SERIAL_PORT macro to match your specific serial port device.
+    - Ensure the necessary Arduino programs are available in the `/arduino` folder.
+
+  Serial Port Configuration:
+    - Non-blocking reads
+    - Baud rate: 9600
+
+  Note: The program runs in an infinite loop, continuously updating the display with the current state
+        and transition information.
+
+  Author: [Gioele Bernardini]
+  Date: [16/07/2024]
+*/
+
 #include <cstring>
 #include <fcntl.h>
 #include <iostream>
 #include <termios.h>
 #include <unistd.h>
-#include <ctime> // Include la libreria ctime per il calcolo del tempo
+#include <ctime>
 
 using namespace std;
 
@@ -96,8 +125,12 @@ int main() {
 
     // Print states '1' - upper line
     for (int i = 0; i < N_COLUMNS; i++) {
-      if (plot[i] == 1)
-        cout << '_';
+      if (plot[i] == 1) {
+        if (i < N_COLUMNS - 1 && plot[i] != plot[i + 1] && plot[i + 1] == 0)
+          cout << ' ';
+        else
+          cout << '_';
+      }
       else
         cout << ' ';
     }
@@ -116,9 +149,12 @@ int main() {
 
     // Print states '0' - lower line
     for (int i = 0; i < N_COLUMNS; i++) {
-      if (plot[i] == 0)
-        cout << '_';
-      else
+      if (plot[i] == 0) {
+        if (i < N_COLUMNS - 1 && plot[i] != plot[i + 1] && plot[i + 1] == 1)
+          cout << ' ';
+        else
+          cout << '_';
+      } else
         cout << ' ';
     }
     cout << endl;

@@ -1,5 +1,5 @@
 /*
-  File: BouncePlotter.ino
+  File: DebouncePlotter.ino
 */
 
 #define MODE_TOOGLE 1

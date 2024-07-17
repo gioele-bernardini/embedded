@@ -1,5 +1,0 @@
-{
-    "board": "arduino:avr:uno",
-    "sketch": "blink/blink.ino",
-    "port": "/dev/ttyACM0"
-}
