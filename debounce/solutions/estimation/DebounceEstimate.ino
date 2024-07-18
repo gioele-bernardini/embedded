@@ -1,49 +1,50 @@
 /*
-  Project: Button Debounce Optimizer
-  Description: This program implements a debounce system for a button, automatically adjusting the debounce
-               time to minimize erroneous readings. The program uses two variables to track the current and
-               previous state of the button, as well as a timer for debounce.
+  File: DebounceEstimate.ino
+  
+  Description:
+  This implementation detects a state change in the button, and starts a debounce timer. During the debounce period, further state changes are ignored. The LED state toggles instantly when the button is pressed, and debounces are counted and displayed via serial communication. Button presses are also counted and displayed.
 
-  Functionality:
-    - When a change in the button state is detected, it checks if it is a bounce or an actual action.
-    - If a bounce is detected, the program increments the debounce time.
-    - If no bounces are detected for a certain number of iterations, the program decrements the debounce time.
-    - The debounce time is automatically adjusted until an optimal value is found.
+  Key Points:
+  - Debounce timer is initiated upon detecting a change in button state.
+  - Further state changes are ignored during the debounce period, ensuring stable button reads.
+  - The LED state toggles immediately on button press, providing instant feedback.
+  - Counts both debounces and button presses, displaying them via serial communication.
 
-  Motivation:
-    - Automatically optimize the debounce time for a button, avoiding the need for manual adjustments.
+  Pros:
+  - Immediate feedback on LED state change upon button press.
+  - Tracks and displays debounce events and button press counts, aiding in debugging and analysis.
 
-  Prototype Note:
-    - This code is a prototype and an embryonic version. Due to time constraints for my thesis,
-      it has only been sketched out and may require further improvements and refinements.
+  Cons:
+  - May register brief bounces as state changes if debounce period is too short.
+  - Ignores all changes during debounce period, possibly missing rapid legitimate presses.
+  - Might not detect false triggers caused by quick fluctuations shorter than the debounce period.
 
-  Author: Gioele Bernardini
-  Date: 16/07/2024
+  Additional Notes:
+  This solution is suited for systems requiring immediate feedback upon button press, with added functionality of counting debounces and button presses for better insight and debugging. This solution may require improvements. 
+
+  Usage for Estimating Debounce Delay:
+  - Upload the program to your microcontroller and open the serial monitor at 9600 baud rate.
+  - Press the button several times and observe the "Debounces" and "Button presses" counts in the serial monitor.
+  - If you notice a high number of debounces, increase the debounceDelay value.
+  - If the button presses are not registered reliably, decrease the debounceDelay value.
+  - Repeat the process of adjusting debounceDelay and pressing the button until the debounce count is minimal and the button press count is accurate.
 */
 
 #define buttonPin 2
 #define ledPin 13
-#define TWEAK_ACCURACY 100
 
 int buttonState = LOW;             // the current reading from the input pin
 int lastReading = LOW;             // the previous reading from the input pin
 unsigned long lastDebounceTime = 0; // the last time the output pin was toggled
-
-unsigned long minDebounceDelay = 1;
-unsigned long maxDebounceDelay = 1000;
-// the debounce time; increase if the output flickers
-unsigned long debounceDelay = (minDebounceDelay + maxDebounceDelay) / 2;
-
+unsigned long debounceDelay = 50;   // the debounce time; increase if the output flickers
 int ledState = LOW;                // the current state of the LED
 int buttonPressCount = 0;          // count of button presses
 int debounceCount = 0;             // count of debounces
-int noDebounceCount = 0;           // count of iterations without debounces
 
 void setup() {
   pinMode(buttonPin, INPUT);
   pinMode(ledPin, OUTPUT);
   Serial.begin(9600);
-  delay(2000);
 }
 
 void loop() {
@@ -54,17 +55,8 @@ void loop() {
     // Update the debounce timer
     if ((millis() - lastDebounceTime) < debounceDelay) {
       debounceCount++;  // Increment debounce count
-      incrementDelay();
-
       Serial.print("Debounces: ");
       Serial.println(debounceCount);  // Print debounce count
-      noDebounceCount = 0;  // Reset no debounce count
-    } else {
-      noDebounceCount++;  // Increment no debounce count
-      if (noDebounceCount > 10) {
-        decrementDelayTime();
-        noDebounceCount = 0;
-      }
     }
     lastDebounceTime = millis();  // Reset debounce timer on state change
   }
@@ -89,47 +81,5 @@ void loop() {
 
   // Save the current reading for the next iteration
   lastReading = reading;
-
-  if (checkDelay()) {
-    Serial.println("Range found:");
-    Serial.print("Min debounce delay: ");
-    Serial.println(minDebounceDelay);
-    Serial.print("Max debounce delay: ");
-    Serial.println(maxDebounceDelay);
-    while(1);
-  }
-}
-
-void incrementDelay() {
-  minDebounceDelay = debounceDelay;
-  debounceDelay = (minDebounceDelay + maxDebounceDelay) / 2;
-  if (debounceDelay > maxDebounceDelay) {
-    debounceDelay = maxDebounceDelay;
-  }
-  if (debounceDelay < minDebounceDelay) {
-    debounceDelay = minDebounceDelay;
-  }
-  Serial.print("Increment delay: ");
-  Serial.println(debounceDelay);
-}
-
-void decrementDelayTime() {
-  maxDebounceDelay = debounceDelay;
-  debounceDelay = (minDebounceDelay + maxDebounceDelay) / 2;
-  if (debounceDelay > maxDebounceDelay) {
-    debounceDelay = maxDebounceDelay;
-  }
-  if (debounceDelay < minDebounceDelay) {
-    debounceDelay = minDebounceDelay;
-  }
-  Serial.print("Decrement delay: ");
-  Serial.println(debounceDelay);
-}
-
-int checkDelay() {
-  if ((maxDebounceDelay - minDebounceDelay) <= TWEAK_ACCURACY)
-    return 1;
-  else
-    return 0;
 }
 
