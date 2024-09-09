@@ -16,16 +16,9 @@ const uint32_t uart_baudrate = 115200;
 void vTaskAFunction(void *pvParameters);
 void vTaskBFunction(void *pvParameters);
 
-void vSimpleDelay();
-
-/* The counter which is used to check when a task should be deleted */
-int counter = 0;
-
-/* The handle to TaskA, which can be used to delete TaskA */
-TaskHandle_t xTaskAHandle = NULL;
-
 /* semaphore handle */
-SemaphoreHandle_t xMutex = 0;
+SemaphoreHandle_t xSemaphoreA = 0;
+SemaphoreHandle_t xSemaphoreB = 0;
 
 /*-----------------------------------------------------------*/
 int main(void) {
@@ -37,7 +30,7 @@ int main(void) {
   uart_println("Creating TaskA.");
   char *pcParameters1 = "TaskA is running and running.";
   result = xTaskCreate(vTaskAFunction, "TaskA", 1000, (void *)pcParameters1, 1,
-                       &xTaskAHandle);
+                       NULL);
   if (result != pdPASS) {
     uart_println("Error creating TaskA task.");
     return 0;
@@ -52,7 +45,8 @@ int main(void) {
     return 0;
   }
 
-  xMutex = xSemaphoreCreateMutex();
+  xSemaphoreA = xSemaphoreCreateCounting(1, 1);
+  xSemaphoreB = xSemaphoreCreateCounting(1, 0);
 
   // Start the tasks
   vTaskStartScheduler();
@@ -70,10 +64,9 @@ void vTaskAFunction(void *pvParameters) {
   uart_println("Start TaskA.");
 
   while (1) {
-    xSemaphoreTake(xMutex, portMAX_DELAY);
+    xSemaphoreTake(xSemaphoreA, portMAX_DELAY);
     uart_println(message);
-    xSemaphoreGive(xMutex);
-    vSimpleDelay();
+    xSemaphoreGive(xSemaphoreB);
   }
 }
 
@@ -82,27 +75,9 @@ void vTaskBFunction(void *pvParameters) {
   uart_println("Start TaskB.");
 
   while (1) {
-    xSemaphoreTake(xMutex, portMAX_DELAY);
-    uart_println("%d: ", counter);
+    xSemaphoreTake(xSemaphoreB, portMAX_DELAY);
     uart_println(message);
-    xSemaphoreGive(xMutex);
-    if (counter == 10) {
-      vTaskDelete(xTaskAHandle);
-    } else if (counter == 20) {
-      vTaskDelete(NULL);
-    }
-    counter++;
-    vSimpleDelay();
-  }
-}
-// m1_3_3e//
-
-/***
- * Wait for a given amount of time
- */
-void vSimpleDelay() {
-  uint32_t i;
-  for (i = 0; i < 100000; i++) {
+    xSemaphoreGive(xSemaphoreA);
   }
 }
 
